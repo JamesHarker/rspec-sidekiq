@@ -1,4 +1,4 @@
-if defined?(Sidekiq::Batch)
+if defined? Sidekiq::Batch
   module RSpec
     module Sidekiq
       class NullObject
@@ -20,6 +20,10 @@ if defined?(Sidekiq::Batch)
         def join
           ::Sidekiq::Worker.drain_all
         end
+
+        def total
+          ::Sidekiq::Worker.jobs.size
+        end
       end
     end
   end
@@ -37,7 +41,6 @@ if defined?(Sidekiq::Batch)
   end
 
   ## Helpers ----------------------------------------------
-
   def mocked_with_mocha?
     Sidekiq::Batch.respond_to? :stubs
   end

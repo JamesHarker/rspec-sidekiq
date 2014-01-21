@@ -9,20 +9,21 @@ Gem::Specification.new do |s|
   s.email       = "github@philostler.com"
   s.homepage    = "http://github.com/philostler/rspec-sidekiq"
   s.summary     = "RSpec for Sidekiq"
-  s.description = "Simple testing of Sidekiq jobs via a collection of matchers and common tasks"
+  s.description = "Simple testing of Sidekiq jobs via a collection of matchers and helpers"
   s.license     = "MIT"
 
-  s.add_dependency "rspec", "~> 2.0"
+  s.add_dependency "rspec", ">= 2.0.0"
   s.add_dependency "sidekiq", ">= 2.4.0"
 
-  s.add_development_dependency "coveralls", "~> 0.6.0"
-  s.add_development_dependency "fuubar", "~> 1.1"
-  s.add_development_dependency "rspec", "~> 2.0"
+  s.add_development_dependency "coveralls", "~> 0.7.0"
+  s.add_development_dependency "fuubar", ">= 1.1.0"
+  s.add_development_dependency "rspec", ">= 2.0.0"
   s.add_development_dependency "sidekiq", ">= 2.4.0"
 
   s.files = Dir[".gitattributes"] +
             Dir[".gitignore"] +
             Dir[".rspec"] +
+            Dir[".simplecov"] +
             Dir[".travis"] +
             Dir["CHANGES.md"] +
             Dir["Gemfile"] +
