@@ -4,6 +4,7 @@
 * Fix type in readme [graudeejs#80]
 * Matchers::HaveEnqueuedJob breaks on jobs with Hash arguments [erikogan#77]
 * have_enqueued_job fails if args includes a Hash bug [gPrado#74]
+* Rename have_enqueued_job to have_enqueued_sidekiq_job due to clash with rspec-rails [mrbrdo]
 
 2.1.0
 ---
