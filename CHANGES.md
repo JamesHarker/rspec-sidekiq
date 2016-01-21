@@ -1,8 +1,39 @@
+2.2.0
+---
+* Fix typo in README file [bradhaydon#87]
+* Fix type in readme [graudeejs#80]
+* Matchers::HaveEnqueuedJob breaks on jobs with Hash arguments [erikogan#77]
+* have_enqueued_job fails if args includes a Hash bug [gPrado#74]
+
+2.1.0
+---
+* ActiveJob support [tarzan#71]
+* adding be expired in matcher [bernabas#72]
+* Fixed testing failures with be_delayed matcher due to rename of `enqueued_at` to `created_at` in latest Sidekiq [philostler]
+* Add support for NullBatch#on and NullStatus#failures to the null batch objects. [PacerPRO#64]
+* Adding a save_backtrace matcher [webdestroya#61]
+* Add flag to skip Batch stubs [paulfri#69]
+* allow passing an instance method to be_delayed matcher [lastobelus#63]
+
+2.0.0
+---
+* Get specs to green [petergoldstein#58]
+* Update spec syntax in README. [futhr#60]
+
+2.0.0.beta
+---
+* Add support for 3.0.0 [yelled3#47]
+* Completely remove have_enqueued_jobs matcher [philostler#56]
+
 1.1.0
 ---
 * Added Support for RSpec 3 [TBAA#44]
-* Fixe gem build error ERROR: (Gem::InvalidSpecificationException) [mourad-ifeelgoods#42]
+* Fix gem build error ERROR: (Gem::InvalidSpecificationException) [mourad-ifeelgoods#42]
 * Make sure sidekiq is required [mourad-ifeelgoods#43]
+* attempt at fixing 'undefined method `configure' for RSpec:Module' [homanchou#51]
+* Supports accessing the batch id [fabiokr#54]
+* Pass message hash to retries_exhausted block [layervault#52]
+* added support for unique scheduled worker matching [jkogara#55]
 
 1.0.0
 ---

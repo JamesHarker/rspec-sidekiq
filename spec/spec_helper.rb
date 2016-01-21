@@ -1,10 +1,13 @@
-require "simplecov"
-require "coveralls"
+require 'simplecov'
+require 'coveralls'
 
-require "sidekiq"
-require "rspec-sidekiq"
+require 'sidekiq'
+require 'rspec-sidekiq'
 
-require_relative "support/init"
+require 'active_job'
+require 'action_mailer'
+
+require_relative 'support/init'
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   Coveralls::SimpleCov::Formatter,
@@ -13,16 +16,9 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
 SimpleCov.start
 
 RSpec.configure do |config|
-  config.alias_example_to :expect_it
-
-  config.expect_with :rspec do |config|
-    config.syntax = :expect
-  end
+  config.disable_monkey_patching!
 
   config.include RSpec::Sidekiq::Spec::Support::Factories
 end
 
-RSpec::Core::MemoizedHelpers.module_eval do
-  alias to should
-  alias to_not should_not
-end
+ActiveJob::Base.queue_adapter = :sidekiq

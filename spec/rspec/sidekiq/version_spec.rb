@@ -1,5 +1,5 @@
-require "spec_helper"
+require 'spec_helper'
 
-describe RSpec::Sidekiq::VERSION do
-  expect_it { to eq("1.0.0") }
+RSpec.describe RSpec::Sidekiq::VERSION do
+  it { is_expected.to eq('2.2.0') }
 end

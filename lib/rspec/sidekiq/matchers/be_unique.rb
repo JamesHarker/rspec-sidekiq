@@ -7,23 +7,22 @@ module RSpec
 
       class BeUnique
         def description
-          "be unique in the queue"
+          'be unique in the queue'
         end
 
         def failure_message
           "expected #{@klass} to be unique in the queue"
         end
 
-        def matches? job
-          @klass = job.kind_of?(Class) ? job : job.class
-          @actual = @klass.get_sidekiq_options["unique"]
-          @actual == true
+        def matches?(job)
+          @klass = job.is_a?(Class) ? job : job.class
+          @actual = @klass.get_sidekiq_options['unique']
+          [true, :all].include?(@actual)
         end
 
-        def negative_failure_message
+        def failure_message_when_negated
           "expected #{@klass} to not be unique in the queue"
         end
-        alias_method :failure_message_when_negated, :negative_failure_message
       end
     end
   end

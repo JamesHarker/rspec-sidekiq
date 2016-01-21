@@ -5,7 +5,6 @@
 [![Travis CI][travis_ci_badge]][travis_ci]
 [![Coveralls][coveralls_badge]][coveralls]
 [![Gemnasium][gemnasium_badge]][gemnasium]
-[![coderwall][coderwall_badge]][coderwall]
 
 ***Simple testing of Sidekiq jobs via a collection of matchers and helpers***
 
@@ -24,7 +23,7 @@
 ```ruby
 # Gemfile
 group :test do
-  gem "rspec-sidekiq"
+  gem 'rspec-sidekiq'
 end
 ```
 rspec-sidekiq requires ```sidekiq/testing``` by default so there is no need to include the line ```require "sidekiq/testing"``` inside your ```spec_helper.rb```.
@@ -52,7 +51,6 @@ end
 * [be_retryable](#be_retryable)
 * [be_unique](#be_unique)
 * [have_enqueued_job](#have_enqueued_job)
-* ~~[have_enqueued_jobs](#have_enqueued_jobs)~~
 
 ### be_delayed
 *Describes a method that should be invoked asynchronously (See [Sidekiq Delayed Extensions][sidekiq_wiki_delayed_extensions])*
@@ -71,6 +69,10 @@ Object.delay_until(1.hour.from_now).is_nil? # delay until
 expect(Object.method :is_nil?).to be_delayed.until 1.hour.from_now
 Object.delay_until(1.hour.from_now).is_a? Object # delay until with argument
 expect(Object.method :is_a?).to be_delayed(Object).until 1.hour.from_now
+
+#Rails Mailer
+MyMailer.delay.some_mail
+expect(MyMailer.instance_method :some_mail).to be_delayed
 ```
 
 ### be_processed_in
@@ -79,7 +81,7 @@ expect(Object.method :is_a?).to be_delayed(Object).until 1.hour.from_now
 sidekiq_options queue: :download
 # test with...
 expect(AwesomeJob).to be_processed_in :download # or
-it { should be_processed_in :download }
+it { is_expected.to be_processed_in :download }
 ```
 
 ### be_retryable
@@ -88,13 +90,30 @@ it { should be_processed_in :download }
 sidekiq_options retry: 5
 # test with...
 expect(AwesomeJob).to be_retryable true # or
-it { should be_retryable true }
-# ...or alternatively specifiy the number of times it should be retried
+it { is_expected.to be_retryable true }
+# ...or alternatively specify the number of times it should be retried
 expect(AwesomeJob).to be_retryable 5 # or
-it { should be_retryable 5 }
+it { is_expected.to be_retryable 5 }
 # ...or when it should not retry
 expect(AwesomeJob).to be_retryable false # or
-it { should be_retryable false }
+it { is_expected.to be_retryable false }
+```
+
+### save_backtrace
+*Describes if a job should save the error backtrace when there is a failure in it's execution*
+```ruby
+sidekiq_options backtrace: 5
+# test with...
+expect(AwesomeJob).to save_backtrace # or
+it { is_expected.to save_backtrace }
+# ...or alternatively specifiy the number of lines that should be saved
+expect(AwesomeJob).to save_backtrace 5 # or
+it { is_expected.to save_backtrace 5 }
+# ...or when it should not save the backtrace
+expect(AwesomeJob).to_not save_backtrace # or
+expect(AwesomeJob).to save_backtrace false # or
+it { is_expected.to_not save_backtrace } # or
+it { is_expected.to save_backtrace false }
 ```
 
 ### be_unique
@@ -103,40 +122,46 @@ it { should be_retryable false }
 sidekiq_options unique: true
 # test with...
 expect(AwesomeJob).to be_unique
-it { should be_unique }
+it { is_expected.to be_unique }
+```
+### be_expired_in
+*Describes when a job should expire*
+```ruby
+sidekiq_options expires_in: 1.hour
+# test with...
+it { is_expected.to be_expired_in 1.hour }
+it { is_expected.to_not be_expired_in 2.hours }
 ```
 
 ### have_enqueued_job
 *Describes that there should be an enqueued job with the specified arguments*
 ```ruby
-Awesomejob.perform_async "Awesome", true
+AwesomeJob.perform_async 'Awesome', true
 # test with...
-expect(AwesomeJob).to have_enqueued_job("Awesome", true)
+expect(AwesomeJob).to have_enqueued_job('Awesome', true)
 ```
-
-### ~~have_enqueued_jobs~~
-*Removed. [See the FAQ & Troubleshooting Wiki page][rspec_sidekiq_wiki_faq_&_troubleshooting] for alternative and more information*
 
 ## Example matcher usage
 ```ruby
-require "spec_helper"
+require 'spec_helper'
 
 describe AwesomeJob do
-  it { should be_processed_in :my_queue }
-  it { should be_retryable 5 }
-  it { should be_unique }
+  it { is_expected.to be_processed_in :my_queue }
+  it { is_expected.to be_retryable 5 }
+  it { is_expected.to be_unique }
+  it { is_expected.to be_expired_in 1.hour }
 
-  it "enqueues another awesome job" do
+  it 'enqueues another awesome job' do
     subject.perform
 
-    expect(AnotherAwesomeJob).to have_enqueued_job("Awesome", true)
+    expect(AnotherAwesomeJob).to have_enqueued_job('Awesome', true)
   end
 end
 ```
 
 ## Helpers
-* [Batches](#batches)
-* [within_sidekiq_retries_exhausted_block](#within_sidekiq_retries_exhausted_block)
+* [Batches (Sidekiq Pro)](#batches)
+* [`within_sidekiq_retries_exhausted_block`](#within_sidekiq_retries_exhausted_block)
 
 ### Batches
 If you are using Sidekiq Batches ([Sidekiq Pro feature][sidekiq_wiki_batches]), rspec-sidekiq replaces the implementation (using the NullObject pattern) enabling testing without a Redis instance. Mocha and RSpec stubbing is supported here.
@@ -148,7 +173,7 @@ sidekiq_retries_exhausted do |msg|
 end
 # test with...
 FooClass.within_sidekiq_retries_exhausted_block {
-  expect(FooClass).to receive(:bar).with("hello")
+  expect(FooClass).to receive(:bar).with('hello')
 }
 ```
 
@@ -161,20 +186,18 @@ Please do! If there's a feature missing that you'd love to see then get in on th
 Issues/Pull Requests/Comments all welcome...
 
 [code_climate]: https://codeclimate.com/github/philostler/rspec-sidekiq
-[code_climate_badge]: https://codeclimate.com/github/philostler/rspec-sidekiq.png
-[coderwall]: https://coderwall.com/philostler
-[coderwall_badge]: https://api.coderwall.com/philostler/endorsecount.png
+[code_climate_badge]: https://codeclimate.com/github/philostler/rspec-sidekiq.svg
 [coveralls]: https://coveralls.io/r/philostler/rspec-sidekiq
-[coveralls_badge]: https://coveralls.io/repos/philostler/rspec-sidekiq/badge.png?branch=master
-[gem_version_badge]: https://badge.fury.io/rb/rspec-sidekiq.png
+[coveralls_badge]: https://img.shields.io/coveralls/philostler/rspec-sidekiq.svg?branch=develop
+[gem_version_badge]: https://badge.fury.io/rb/rspec-sidekiq.svg
 [gemnasium]: https://gemnasium.com/philostler/rspec-sidekiq
-[gemnasium_badge]: https://gemnasium.com/philostler/rspec-sidekiq.png
+[gemnasium_badge]: https://gemnasium.com/philostler/rspec-sidekiq.svg
 [github]: http://github.com/philostler/rspec-sidekiq
 [ruby_doc]: http://rubydoc.info/gems/rspec-sidekiq/frames
 [ruby_gems]: http://rubygems.org/gems/rspec-sidekiq
 [ruby_toolbox]: http://www.ruby-toolbox.com/projects/rspec-sidekiq
 [travis_ci]: http://travis-ci.org/philostler/rspec-sidekiq
-[travis_ci_badge]: https://secure.travis-ci.org/philostler/rspec-sidekiq.png
+[travis_ci_badge]: https://travis-ci.org/philostler/rspec-sidekiq.svg?branch=develop
 
 [rspec_sidekiq_wiki_faq_&_troubleshooting]: https://github.com/philostler/rspec-sidekiq/wiki/FAQ-&-Troubleshooting
 [sidekiq_wiki_batches]: https://github.com/mperham/sidekiq/wiki/Batches
