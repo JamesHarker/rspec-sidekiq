@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe RSpec::Sidekiq::Matchers::HaveEnqueuedSidekiqJob do
   let(:argument_subject) { RSpec::Sidekiq::Matchers::HaveEnqueuedSidekiqJob.new worker_args }
-  let(:matcher_subject) { RSpec::Sidekiq::Matchers::HaveEnqueuedSidekiqJob.new [be_a(String), be_a(Fixnum), true, be_a(Hash)] }
+  let(:matcher_subject) { RSpec::Sidekiq::Matchers::HaveEnqueuedSidekiqJob.new [be_a(String), be_a(Integer), true, be_a(Hash)] }
   let(:worker) { create_worker }
   let(:worker_args) { ['string', 1, true, {key: 'value', nested: [{hash: true}]}] }
   let(:active_job) { create_active_job :mailers }
